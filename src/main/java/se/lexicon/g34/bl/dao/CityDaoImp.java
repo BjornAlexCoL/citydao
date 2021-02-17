@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
 public class CityDaoImp implements CityDao {
     @Override
     public City findById(int id) {
@@ -43,7 +45,7 @@ public class CityDaoImp implements CityDao {
         ) {
             preparedStatement.setString(1, code);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 cityList.add(new City(
                         resultSet.getInt(1),
                         resultSet.getString(2),
@@ -66,7 +68,7 @@ public class CityDaoImp implements CityDao {
         ) {
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 cityList.add(new City(
                         resultSet.getInt(1),
                         resultSet.getString(2),
@@ -82,7 +84,7 @@ public class CityDaoImp implements CityDao {
 
     @Override
     public List<City> findAll() {
-        String query = "Select * from city";
+        String query = "Select * from city;";
         List<City> cityList = new ArrayList<>();
         try {
             Statement statement = MySqlConnection.getConnection().createStatement();
@@ -104,23 +106,27 @@ public class CityDaoImp implements CityDao {
     public City add(City city) {
         String query = "INSERT INTO city VALUE (0,?,?,?,?);";
         try (
-                PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query)
+                PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query, RETURN_GENERATED_KEYS)
         ) {
             preparedStatement.setString(1, city.getName());
             preparedStatement.setString(2, city.getCountryCode());
             preparedStatement.setString(3, city.getDistrict());
             preparedStatement.setInt(4, city.getPopulation());
-            city.setId(Statement.RETURN_GENERATED_KEYS);
-         } catch (SQLException e) {
+            preparedStatement.executeUpdate();
+            ResultSet genKeys = preparedStatement.getGeneratedKeys();
+            if (genKeys.next()) {
+                city.setId(genKeys.getInt(1));
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-    return city;
+        return city;
     }
 
 
     @Override
     public City update(City city) {
-        String query = "UPDATE city SET name='?',CountryCode='?',District='?',Population=? WHERE ID=?;";
+        String query = "UPDATE city SET name=?,CountryCode=?,District=?,Population=? WHERE ID=?;";
         try (
                 PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query)
         ) {
@@ -140,7 +146,7 @@ public class CityDaoImp implements CityDao {
     @Override
     public int delete(City city) {
         String query = "DELETE FROM city WHERE id=?";
-        int result=0;
+        int result = 0;
         try (
                 PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query)
         ) {
