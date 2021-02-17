@@ -4,17 +4,24 @@ import java.util.Objects;
 
 public class City {
     private int id;
-    private int name;
-    private int countryCode;
-    private int district;
+    private String name;
+    private String countryCode;
+    private String district;
     private int population;
 
     //Constructors
     public City() {
     }
 
-    public City(int id, int name, int countryCode, int district, int population) {
+    public City(int id, String name, String countryCode, String district, int population) {
         this.id = id;
+        this.name = name;
+        this.countryCode = countryCode;
+        this.district = district;
+        this.population = population;
+    }
+
+    public City(String name, String countryCode, String district, int population) {
         this.name = name;
         this.countryCode = countryCode;
         this.district = district;
@@ -31,27 +38,27 @@ public class City {
         this.id = id;
     }
 
-    public int getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public int getCountryCode() {
+    public String getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(int countryCode) {
+    public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
 
-    public int getDistrict() {
+    public String getDistrict() {
         return district;
     }
 
-    public void setDistrict(int district) {
+    public void setDistrict(String district) {
         this.district = district;
     }
 
@@ -63,14 +70,14 @@ public class City {
         this.population = population;
     }
 
-    //Overrides
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof City)) return false;
         City city = (City) o;
-        return getId() == city.getId() && getName() == city.getName() && getCountryCode() == city.getCountryCode() && getDistrict() == city.getDistrict() && getPopulation() == city.getPopulation();
+        return getId() == city.getId() && getPopulation() == city.getPopulation() && Objects.equals(getName(), city.getName()) && Objects.equals(getCountryCode(), city.getCountryCode()) && Objects.equals(getDistrict(), city.getDistrict());
     }
+
 
     @Override
     public int hashCode() {
