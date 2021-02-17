@@ -3,11 +3,11 @@ package se.lexicon.g34.bl.model;
 import java.util.Objects;
 
 public class City {
-    int id;
-    int name;
-    int countryCode;
-    int district;
-    int population;
+    private int id;
+    private int name;
+    private int countryCode;
+    private int district;
+    private int population;
 
     //Constructors
     public City() {
